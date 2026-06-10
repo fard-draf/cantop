@@ -58,7 +58,7 @@ int main(void) {
 
     poll_register(&pc, ac.net_fd, POLL_IN, pipeline_handler, &ac);
     poll_register(&pc, ac.sig_fd, POLL_IN, sig_handler, &ac);
-    poll_register(&pc, ac.timer_fd, POLL_IN, ui_handler, &ac);
+    poll_register(&pc, ac.ui_fd, POLL_IN, ui_handler, &us);
     poll_register(&pc, ac.watchdog_fd, POLL_IN, watchdog_handler, &ac);
     poll_register(&pc, STDIN_FILENO, POLL_IN, ui_stdin_handler, &us);
 

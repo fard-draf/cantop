@@ -13,8 +13,10 @@ typedef struct {
     struct can_frame frame;
     int net_fd;
     int sig_fd;
-    int timer_fd;
+    int ui_fd;
     int watchdog_fd;
 } AppContext;
+
+AppContext context_init(void);
 
 #endif // APP_H_
