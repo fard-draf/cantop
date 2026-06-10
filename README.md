@@ -48,8 +48,8 @@ To build without them, edit `CFLAGS` in the Makefile.
 
 ```sh
 # bring up your CAN interface first
+# adjust bitrate to match your bus (250000 for N2K/J1939, 500000 for automotive)
 ip link set can0 up type can bitrate 250000
-
 ./cantop
 ```
 
