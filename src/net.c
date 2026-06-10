@@ -9,7 +9,7 @@
 
 static const char *ifname = "can0";
 
-ResultCanNet net_init(AppContext *ac) {
+int net_init(AppContext *ac) {
     int sfd;
 
     struct sockaddr_can addr;
@@ -19,7 +19,7 @@ ResultCanNet net_init(AppContext *ac) {
     if (sfd == -1) {
         int err = errno;
         syslog(LOG_ERR, "socket: %s", strerror(err));
-        return INIT_ERR;
+        return -1;
     }
 
     ac->net_fd = sfd;
@@ -28,7 +28,7 @@ ResultCanNet net_init(AppContext *ac) {
     if (ioctl(sfd, SIOCGIFINDEX, &ifr) == -1) {
         int err = errno;
         syslog(LOG_ERR, "ioctl: %s", strerror(err));
-        return RUN_ERR;
+        return -1;
     }
 
     syslog(LOG_INFO, "ifindex of %s = %d", ifname, ifr.ifr_ifru.ifru_ivalue);
@@ -38,10 +38,10 @@ ResultCanNet net_init(AppContext *ac) {
     if (bind(sfd, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
         int err = errno;
         syslog(LOG_ERR, "bind: %s", strerror(err));
-        return RUN_ERR;
+        return -1;
     }
 
-    return SUCCESS;
+    return 0;
 }
 
 void net_recv(AppContext *ac) {

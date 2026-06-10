@@ -64,29 +64,23 @@ int main(void) {
 
     if (poll_launcher(&pc) == -1) {
         running = 0;
+        syslog(LOG_ERR, "[ERR] poll_launcher");
         goto cleanup;
     }
-
     ret = 0;
 
 cleanup:
-    switch (ret) {
-    case 0: {
-        __attribute__((fallthrough));
+    if (ac.ui_fd >= 0 && close(ac.ui_fd) == -1) {
+        syslog(LOG_ERR, "[ERR] close ui fd fail");
     }
-    case -1: {
-        if (close(ac.net_fd) == -1) {
-            syslog(LOG_ERR, "close socket fail");
-        }
-        break;
+    if (ac.sig_fd >= 0 && close(ac.sig_fd) == -1) {
+        syslog(LOG_ERR, "[ERR] close sig fd fail");
     }
-    case -2: {
-        syslog(LOG_ERR, "unable to reach can interface.. exit..");
-        break;
+    if (ac.net_fd >= 0 && close(ac.net_fd) == -1) {
+        syslog(LOG_ERR, "[ERR] close net fd fail");
     }
-    default:
-        syslog(LOG_ERR, "unexpected err.. exit..");
-        break;
+    if (ac.watchdog_fd >= 0 && close(ac.watchdog_fd) == -1) {
+        syslog(LOG_ERR, "[ERR] close watchdog fd fail");
     }
     closelog();
     return ret;
