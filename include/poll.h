@@ -1,7 +1,7 @@
 #ifndef POLL_H_
 #define POLL_H_
 
-#include "app.h"
+#include "context.h"
 #include <poll.h>
 
 #define MAX_CLIENT 10

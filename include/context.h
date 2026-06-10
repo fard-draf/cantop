@@ -8,11 +8,12 @@
 extern volatile sig_atomic_t running;
 
 typedef struct {
-    Analyzer anlyzr;
+    Analyzer an;
     CanReader cr;
     struct can_frame frame;
     int net_fd;
     int sig_fd;
+    int timer_fd;
 } AppContext;
 
 #endif // APP_H_

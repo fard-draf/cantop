@@ -1,7 +1,7 @@
 #ifndef FRAME_PARSER_H_
 #define FRAME_PARSER_H_
 
-#include "app.h"
+#include "context.h"
 #include "utils.h"
 
 void frame_reader(AppContext *ac);

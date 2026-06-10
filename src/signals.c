@@ -1,5 +1,5 @@
 #include "../include/signals.h"
-#include "../include/app.h"
+#include "../include/context.h"
 #include "../include/log.h"
 #include "sys/signalfd.h"
 

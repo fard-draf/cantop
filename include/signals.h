@@ -1,7 +1,7 @@
 #ifndef SIGNALS_H_
 #define SIGNALS_H_
 
-#include "app.h"
+#include "context.h"
 #include <stdlib.h>
 #include <sys/signal.h>
 

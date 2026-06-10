@@ -3,8 +3,7 @@
 #include <sys/ioctl.h>
 #include <sys/un.h>
 
-#include "../include/app.h"
-#include "../include/frame_parser.h"
+#include "../include/context.h"
 #include "../include/log.h"
 #include "../include/net.h"
 

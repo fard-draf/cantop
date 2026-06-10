@@ -1,7 +1,7 @@
 #ifndef NET_H_
 #define NET_H_
-#include "app.h"
 #include "common.h"
+#include "context.h"
 
 typedef enum {
     SUCCESS = 0,

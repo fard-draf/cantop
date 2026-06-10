@@ -1,10 +1,11 @@
-#include "../include/app.h"
 #include "../include/common.h"
+#include "../include/context.h"
 #include "../include/frame_parser.h"
 #include "../include/log.h"
 #include "../include/net.h"
 #include "../include/poll.h"
 #include "../include/signals.h"
+#include "../include/ui.h"
 
 volatile sig_atomic_t running = 1;
 
