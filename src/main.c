@@ -40,8 +40,12 @@ int main(void) {
     }
 
     // metrics init
-    if ((res = analyzer_start_glob(&ac.anlyzr) == -1)) {
-        ret = res;
+    if (analyzer_start_glob(&ac.an) == -1) {
+        goto cleanup;
+    }
+
+    // ui init
+    if ((ui_init(&ac)) == -1) {
         goto cleanup;
     }
 
@@ -50,19 +54,13 @@ int main(void) {
 
     poll_register(&pc, ac.net_fd, POLL_IN, pipeline_handler, &ac);
     poll_register(&pc, ac.sig_fd, POLL_IN, sig_handler, &ac);
+    poll_register(&pc, ac.timer_fd, POLL_IN, ui_handler, &ac);
 
     if (poll_launcher(&pc) == -1) {
         running = 0;
         goto cleanup;
     }
 
-    // net_recv_init
-    // - stdin init
-    // - signals
-    // - ui -> ncurse avec timerfd
-
-    // poll launcher
-    // cleanup
     ret = 0;
 
 cleanup:
