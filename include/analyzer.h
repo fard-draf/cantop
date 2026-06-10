@@ -15,7 +15,9 @@ typedef struct {
 typedef struct {
     int64_t time_start;
     int64_t last_seen;
-    uint16_t count_valid;
+    int64_t snapshot_time;
+    uint32_t tram_rate;
+    uint32_t tram_count_snapshot;
     uint16_t count_err;
     uint16_t count_total;
 } PgnMetrics;
@@ -29,6 +31,9 @@ typedef struct {
 typedef struct {
     int64_t time_start;
     int64_t last_seen;
+    int64_t snapshot_time;
+    uint32_t tram_rate;
+    uint32_t tram_count_snapshot;
     uint8_t pgn_count_actual;
 } ProviderMetrics;
 
@@ -42,11 +47,13 @@ typedef struct {
 typedef struct {
     struct timespec start;
     int64_t last_seen;
-    uint32_t tram_count_valid;
+    int64_t snapshot_time;
+    uint32_t tram_rate;
     uint32_t tram_count_err;
     uint32_t tram_count_total;
+    uint32_t tram_count_snapshot;
+    uint8_t providers_count_max;
     uint8_t providers_count_actual;
-    uint8_t providers_count_min;
 } GlobMetrics;
 
 typedef struct {
@@ -55,7 +62,7 @@ typedef struct {
 } Analyzer;
 
 int analyzer_populate(Analyzer *self, CanReader *cr);
-int analyzer_start_glob(Analyzer *self);
-void analyzer_print(Analyzer *self);
+int analyzer_init(Analyzer *self);
+void analyzer_update_rate(Analyzer *self);
 
 #endif // ANALYZER_H_

@@ -13,39 +13,42 @@ static void pipeline_handler(void *ctx) {
     AppContext *ac = ctx;
     net_recv(ac);
     frame_reader(ac);
-    analyzer_populate(&ac->anlyzr, &ac->cr);
-    analyzer_print(&ac->anlyzr);
+    analyzer_populate(&ac->an, &ac->cr);
 };
 
 int main(void) {
-
-    int ret = -1, res = 0;
-    AppContext ac = {0};
-
+    int ret = -1;
+    AppContext ac = context_init();
+    UiState us = {.ac = &ac, .paused = 0};
     syslog_init();
-    setlogmask(LOG_UPTO(LOG_INFO));
 
     // net init
-    if ((res = net_init(&ac)) < 0) {
-        ret = res;
-        syslog(LOG_ERR, "can_socket_init error");
+    if (net_init(&ac) == -1) {
+        syslog(LOG_ERR, "[ERR] net_init");
         goto cleanup;
     }
 
     // sig init
-    if ((res = sig_init(&ac)) == -1) {
-        ret = res;
-        syslog(LOG_ERR, "sig_handling_init error");
-        goto cleanup;
-    }
-
-    // metrics init
-    if (analyzer_start_glob(&ac.an) == -1) {
+    if ((sig_init(&ac)) == -1) {
+        syslog(LOG_ERR, "[ERR] sig_init");
         goto cleanup;
     }
 
     // ui init
     if ((ui_init(&ac)) == -1) {
+        syslog(LOG_ERR, "[ERR] ui_init");
+        goto cleanup;
+    }
+
+    // watchdog init
+    if ((watchdog_init(&ac)) == -1) {
+        syslog(LOG_ERR, "[ERR] watchdog_init");
+        goto cleanup;
+    }
+
+    // metrics init
+    if (analyzer_init(&ac.an) == -1) {
+        syslog(LOG_ERR, "[ERR] analyzer_init");
         goto cleanup;
     }
 
