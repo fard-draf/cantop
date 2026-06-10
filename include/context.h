@@ -14,6 +14,7 @@ typedef struct {
     int net_fd;
     int sig_fd;
     int timer_fd;
+    int watchdog_fd;
 } AppContext;
 
 #endif // APP_H_
