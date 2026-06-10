@@ -3,6 +3,7 @@
 
 #include <linux/can/raw.h>
 #include <stdint.h>
+#include <time.h>
 
 typedef struct {
     uint32_t pgn;
@@ -11,5 +12,7 @@ typedef struct {
     uint8_t can_dlc;
     uint8_t data[8];
 } CanReader;
+
+int64_t elapsed_ms(const struct timespec *start);
 
 #endif //  CAN_UTILS_H
