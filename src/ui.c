@@ -2,12 +2,14 @@
 
 #define WIN_TITLE_H 3
 #define WIN_GLOBAL_H 5
-#define WIN_TRAMES_H 6
+#define WIN_PROVIDERS_H 8
+#define WIN_TRAMES_H 10
 #define WIN_WIDTH 60
 #define WIN_START_X 2
 
 static WINDOW *win_title = NULL;
 static WINDOW *win_global = NULL;
+static WINDOW *win_providers = NULL;
 static WINDOW *win_trames = NULL;
 
 void ui_draw(Analyzer *an);
@@ -33,6 +35,8 @@ int ui_init(AppContext *ac) {
 
     ac->ui_fd = tfd;
 
+    // TODO: put this init out of this function. Two handler, maybe ui_fd_init +
+    // ui_screen_init and wrap it inside a struct
     // TODO: error handling
     initscr();             /* ncruses init */
     cbreak();              /* unset line buffer -> direct input */
@@ -43,8 +47,11 @@ int ui_init(AppContext *ac) {
 
     win_title = newwin(WIN_TITLE_H, WIN_WIDTH, 1, WIN_START_X);
     win_global = newwin(WIN_GLOBAL_H, WIN_WIDTH, WIN_TITLE_H + 1, WIN_START_X);
+    win_providers = newwin(WIN_PROVIDERS_H, WIN_WIDTH,
+                           WIN_TITLE_H + WIN_GLOBAL_H + 1, WIN_START_X);
     win_trames = newwin(WIN_TRAMES_H, WIN_WIDTH,
-                        1 + WIN_TITLE_H + WIN_GLOBAL_H + 1, WIN_START_X);
+                        1 + WIN_TITLE_H + WIN_GLOBAL_H + WIN_PROVIDERS_H + 1,
+                        WIN_START_X);
 
     return 0;
 }
@@ -89,24 +96,48 @@ void ui_draw(Analyzer *an) {
     werase(win_global);
     box(win_global, 0, 0);
     mvwprintw(win_global, 0, 2, " Global ");
-    mvwprintw(win_global, 1, 2, "tram_count : %d", an->g_metr.tram_count_total);
+    mvwprintw(win_global, 1, 2, "tram_count : %d",
+              an->metr.glob_data_rate.tram_count_total);
     mvwprintw(win_global, 2, 2, "since      : %.1fs",
-              elapsed_ms(&an->g_metr.start) / 1000.0);
-    mvwprintw(win_global, 3, 2, "tram/sec   : %d", an->g_metr.tram_rate);
+              elapsed_ms(&an->metr.start) / 1000.0);
+    mvwprintw(win_global, 3, 2, "tram/sec   : %d",
+              an->metr.glob_data_rate.tram_rate);
 
     // --- fenêtre trames ---
+    werase(win_providers);
+    box(win_providers, 0, 0);
+    mvwprintw(win_providers, 0, 2, " Providers ");
+    int j = 1;
+    for (uint8_t i = an->prov_mgmt.instances_actives; i-- > 0;) {
+        mvwprintw(win_providers, j, 2, "%d", an->prov_inst[i].sa);
+        j++;
+    }
+
     werase(win_trames);
     box(win_trames, 0, 0);
-    mvwprintw(win_trames, 0, 2, " Trames ");
+    mvwprintw(win_trames, 0, 2, "PGN");
+    int l = 1;
+    for (uint8_t k = an->pgn_mgmt.instances_actives; k-- > 0;) {
+        mvwprintw(win_trames, l, 2, "%d", an->pgn_inst[k].frame.pgn);
+        int m = 10;
+        for (uint8_t i = 0; i < an->pgn_inst[k].frame.data_len; i++) {
+            mvwprintw(win_trames, l, m, "%02X", an->pgn_inst[k].frame.data[i]);
+            m += 3;
+        }
+        l++;
+    }
 
     wnoutrefresh(win_title);
     wnoutrefresh(win_global);
+    wnoutrefresh(win_providers);
     wnoutrefresh(win_trames);
     doupdate();
 }
 
 void ui_cleanup(void) {
+    delwin(win_title);
     delwin(win_global);
     delwin(win_trames);
+    delwin(win_providers);
     endwin();
 }

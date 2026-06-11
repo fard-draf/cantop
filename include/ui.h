@@ -15,5 +15,6 @@ typedef struct {
 int ui_init(AppContext *ac);
 void ui_handler(void *ctx);
 void ui_stdin_handler(void *ctx);
+void ui_cleanup(void);
 
 #endif // UI_H_

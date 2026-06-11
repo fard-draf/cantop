@@ -70,8 +70,11 @@ int main(void) {
     ret = 0;
 
 cleanup:
-    if (ac.ui_fd >= 0 && close(ac.ui_fd) == -1) {
-        syslog(LOG_ERR, "[ERR] close ui fd fail");
+    if (ac.ui_fd >= 0) {
+        ui_cleanup();
+        if (close(ac.ui_fd) == -1) {
+            syslog(LOG_ERR, "[ERR] close ui fd fail");
+        }
     }
     if (ac.sig_fd >= 0 && close(ac.sig_fd) == -1) {
         syslog(LOG_ERR, "[ERR] close sig fd fail");
@@ -82,6 +85,7 @@ cleanup:
     if (ac.watchdog_fd >= 0 && close(ac.watchdog_fd) == -1) {
         syslog(LOG_ERR, "[ERR] close watchdog fd fail");
     }
+
     closelog();
     return ret;
 }
