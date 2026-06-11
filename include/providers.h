@@ -4,8 +4,9 @@
 #include "log.h"
 #include "utils.h"
 
-int prov_instance_finder(Analyzer *an, CanReader *cr);
-void prov_instance_init(Analyzer *an, Provider *prov_instance, CanReader *cr);
-void prov_instance_update(Analyzer *an, Provider *prov_instance, CanReader *cr);
+int provider_finder(Analyzer *an, CanReader *cr);
+void provider_init(Analyzer *an, Provider *provider, CanReader *cr);
+void provider_update(Analyzer *an, Provider *provider, CanReader *cr);
+void providers_actives(Analyzer *an, Provider *provider);
 
 #endif // PROVIDERS_H_

@@ -1,6 +1,6 @@
 #include "../include/pgns.h"
 
-int pgn_instance_finder(Analyzer *an, CanReader *cr, size_t provider_idx) {
+int pgns_finder(Analyzer *an, CanReader *cr, size_t provider_idx) {
     // match pgn between inst[i].frame.pgn and cr->pgn
     for (size_t i = 0; i < MAX_PROVIDER_INSTANCES; i++) {
         if (an->prov_inst[provider_idx].pgn_inst[i].frame.pgn == cr->pgn) {
@@ -29,7 +29,7 @@ int pgn_instance_finder(Analyzer *an, CanReader *cr, size_t provider_idx) {
     return -1;
 }
 
-void pgn_instance_init(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr) {
+void pgns_init(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr) {
     pgn_instance->is_free = false;
     pgn_instance->frame.pgn = cr->pgn;
     pgn_instance->frame.data_len = cr->can_dlc;
@@ -38,7 +38,7 @@ void pgn_instance_init(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr) {
     pgn_instance->metr.last_seen = pgn_instance->metr.time_start;
 }
 
-void pgn_instance_update(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr) {
+void pgns_update(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr) {
     pgn_instance->metr.last_seen = elapsed_ms(&an->g_metr.start);
     pgn_instance->frame.count += 1;
     pgn_instance->frame.data_len = cr->can_dlc;

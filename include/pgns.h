@@ -4,8 +4,8 @@
 #include "log.h"
 #include "utils.h"
 
-int pgn_instance_finder(Analyzer *an, CanReader *cr, size_t provider_idx);
-void pgn_instance_init(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr);
-void pgn_instance_update(Analyzer *an, PgnEntry *pgn_instance, CanReader *cr);
+int pgn_finder(Analyzer *an, CanReader *cr, size_t provider_idx);
+void pgn_init(Analyzer *an, PgnEntry *pgn_entry, CanReader *cr);
+void pgn_update(Analyzer *an, PgnEntry *pgn_entry, CanReader *cr);
 
 #endif // PGNS_H_

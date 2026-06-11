@@ -61,8 +61,8 @@ typedef struct {
     GlobMetrics g_metr;
 } Analyzer;
 
-int analyzer_populate(Analyzer *self, CanReader *cr);
-int analyzer_init(Analyzer *self);
-void analyzer_update_rate(Analyzer *self);
+int analyzer_populate(Analyzer *an, CanReader *cr);
+int analyzer_init(Analyzer *an);
+void analyzer_update_rate(Analyzer *an);
 
 #endif // ANALYZER_H_
