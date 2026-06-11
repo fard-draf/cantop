@@ -3,62 +3,64 @@
 #include "common.h"
 #include "utils.h"
 
-#define MAX_PROVIDERS_NBR 64
-#define MAX_PROVIDER_INSTANCES 64
+#define MAX_PROVIDERS_INSTANCES 255
+#define MAX_PGNS_INSTANCES 255
+
+typedef struct {
+    union {
+        int8_t providers_actives_idx[MAX_PROVIDERS_INSTANCES];
+        int8_t pgns_actives_idx[MAX_PGNS_INSTANCES];
+    };
+    uint8_t instances_actives;
+    bool is_fresh;
+} KeyManager;
+
+typedef struct {
+    int64_t snapshot_time;
+    uint64_t last_seen;
+    uint32_t tram_rate;
+    uint32_t tram_count_total;
+    uint32_t tram_count_err;
+    uint32_t tram_count_snapshot;
+} DataRate;
 
 typedef struct {
     uint32_t pgn;
     uint32_t count;
     uint8_t data_len;
-} ProviderPgn;
+    uint8_t data[8];
+} Frame;
 
 typedef struct {
-    int64_t time_start;
-    int64_t last_seen;
-    int64_t snapshot_time;
-    uint32_t tram_rate;
-    uint32_t tram_count_snapshot;
-    uint16_t count_err;
-    uint16_t count_total;
+    DataRate pgn_data_rate;
 } PgnMetrics;
 
 typedef struct {
-    ProviderPgn frame;
+    Frame frame;
     PgnMetrics metr;
-    bool is_free;
+    uint8_t provider;
 } PgnEntry;
 
 typedef struct {
-    int64_t time_start;
-    int64_t last_seen;
-    int64_t snapshot_time;
-    uint32_t tram_rate;
-    uint32_t tram_count_snapshot;
-    uint8_t pgn_count_actual;
+    DataRate prov_data_rate;
 } ProviderMetrics;
 
 typedef struct {
-    PgnEntry pgn_inst[MAX_PROVIDER_INSTANCES];
     ProviderMetrics metr;
     uint8_t sa;
-    bool is_free;
 } Provider;
 
 typedef struct {
+    DataRate glob_data_rate;
     struct timespec start;
-    int64_t last_seen;
-    int64_t snapshot_time;
-    uint32_t tram_rate;
-    uint32_t tram_count_err;
-    uint32_t tram_count_total;
-    uint32_t tram_count_snapshot;
-    uint8_t providers_count_max;
-    uint8_t providers_count_actual;
 } GlobMetrics;
 
 typedef struct {
-    Provider prov_inst[MAX_PROVIDERS_NBR];
-    GlobMetrics g_metr;
+    Provider prov_inst[MAX_PROVIDERS_INSTANCES];
+    PgnEntry pgn_inst[MAX_PGNS_INSTANCES];
+    GlobMetrics metr;
+    KeyManager pgn_mgmt;
+    KeyManager prov_mgmt;
 } Analyzer;
 
 int analyzer_populate(Analyzer *an, CanReader *cr);

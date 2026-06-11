@@ -1,39 +1,37 @@
 #include "../include/providers.h"
 
-int providers_finder(Analyzer *an, CanReader *cr) {
+int provider_finder(Analyzer *an, CanReader *cr) {
     // match source address
-    for (size_t i = 0; i < MAX_PROVIDERS_NBR; i++) {
+    for (uint8_t i = an->prov_mgmt.instances_actives; i-- > 0;) {
         if (an->prov_inst[i].sa == cr->sa) {
-            syslog(LOG_DEBUG, "[PROVIDER %d] matching [PROV_INSTANCE %zu] ",
+            syslog(LOG_DEBUG, "[PROVIDER %d] matching [PROV_INSTANCE %d] ",
                    cr->sa, i);
+            an->prov_mgmt.is_fresh = false;
             return i;
         }
     }
     // if no match, take the first free
-    for (size_t i = 0; i < MAX_PROVIDERS_NBR; i++) {
-        if (an->prov_inst[i].is_free == true) {
-            syslog(LOG_DEBUG, "[PROVIDER %d] create new [PROV_INSTANCE %zu]",
-                   cr->sa, i);
-            return i;
-        }
+    if (an->prov_mgmt.instances_actives < MAX_PROVIDERS_INSTANCES) {
+        an->prov_mgmt.is_fresh = true;
+        return an->prov_mgmt.instances_actives;
     }
 
     // no place founded
-    syslog(LOG_INFO, "[PROVIDER %d] -> NO SPACE LEFT IN [PROV_INSTANCE]",
+    syslog(LOG_DEBUG, "[PROVIDER %d] -> NO SPACE LEFT IN [PROV_INSTANCE]",
            cr->sa);
     return -1;
 }
 
-void providers_init(Analyzer *an, Provider *provider, CanReader *cr) {
-    provider->metr.time_start = elapsed_ms(&an->g_metr.start);
-    provider->metr.last_seen = provider->metr.time_start;
-    an->g_metr.providers_count_actual += 1;
-    an->g_metr.providers_count_max += 1;
-    provider->is_free = false;
+void provider_init(Analyzer *an, Provider *provider, CanReader *cr) {
+
     provider->sa = cr->sa;
+    provider->metr.prov_data_rate.last_seen = elapsed_ms(&an->metr.start);
 }
 
-void providers_update(Analyzer *an, Provider *provider, CanReader *cr) {
-    provider->metr.last_seen = elapsed_ms(&an->g_metr.start);
-    an->g_metr.providers_count_actual += 1;
+void provider_update(Analyzer *an, Provider *provider, CanReader *cr) {
+    provider->metr.prov_data_rate.last_seen = elapsed_ms(&an->metr.start);
+}
+
+void providers_actives(Analyzer *an, Provider *provider) {
+    /* searching for the flag !free on providers instances */
 }
