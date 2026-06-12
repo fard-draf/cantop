@@ -9,8 +9,10 @@ typedef struct {
     uint32_t pgn;
     uint8_t pf;
     uint8_t sa;
-    uint8_t can_dlc;
+    uint8_t dlc;
     uint8_t data[8];
+    uint8_t priority;
+    uint8_t dest_addr;
 } CanReader;
 
 int64_t elapsed_ms(const struct timespec *start);
