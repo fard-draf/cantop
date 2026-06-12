@@ -1,5 +1,6 @@
 #include "../include/watchdog.h"
 #include "../include/analyzer.h"
+#include "../include/pgns.h"
 
 int watchdog_init(AppContext *ac) {
 
@@ -30,4 +31,7 @@ void watchdog_handler(void *ctx) {
     uint64_t expirations;
     read(ac->watchdog_fd, &expirations, sizeof(expirations));
     analyzer_update_rate(&ac->an);
+    for (uint8_t i = ac->an.pgns.reg.instances_actives_count; i-- > 0;) {
+        pgn_update_rate(&ac->an, i);
+    }
 }
