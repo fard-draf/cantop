@@ -1,6 +1,7 @@
 #include "../include/watchdog.h"
 #include "../include/analyzer.h"
 #include "../include/pgns.h"
+#include "../include/reaper.h"
 
 int watchdog_init(AppContext *ac) {
 
@@ -34,4 +35,6 @@ void watchdog_handler(void *ctx) {
     for (uint8_t i = ac->an.pgns.reg.instances_actives_count; i-- > 0;) {
         pgn_update_rate(&ac->an, i);
     }
+    reaper_pgns(&ac->an);
+    reaper_providers(&ac->an);
 }
