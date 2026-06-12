@@ -7,13 +7,9 @@
 #define MAX_PGNS_INSTANCES 255
 
 typedef struct {
-    union {
-        int8_t providers_actives_idx[MAX_PROVIDERS_INSTANCES];
-        int8_t pgns_actives_idx[MAX_PGNS_INSTANCES];
-    };
-    uint8_t instances_actives;
+    uint8_t instances_actives_count;
     bool is_fresh;
-} KeyManager;
+} Registry;
 
 typedef struct {
     int64_t snapshot_time;
@@ -29,10 +25,12 @@ typedef struct {
     uint32_t count;
     uint8_t data_len;
     uint8_t data[8];
+    uint8_t priority;
+    uint8_t dest_addr;
 } Frame;
 
 typedef struct {
-    DataRate pgn_data_rate;
+    DataRate datas;
 } PgnMetrics;
 
 typedef struct {
@@ -42,25 +40,33 @@ typedef struct {
 } PgnEntry;
 
 typedef struct {
-    DataRate prov_data_rate;
+    PgnEntry entries[MAX_PGNS_INSTANCES];
+    Registry reg;
+} Pgns;
+
+typedef struct {
+    DataRate datas;
 } ProviderMetrics;
 
 typedef struct {
     ProviderMetrics metr;
     uint8_t sa;
-} Provider;
+} ProviderEntry;
 
 typedef struct {
-    DataRate glob_data_rate;
+    ProviderEntry entries[MAX_PROVIDERS_INSTANCES];
+    Registry reg;
+} Providers;
+
+typedef struct {
+    DataRate datas;
     struct timespec start;
 } GlobMetrics;
 
 typedef struct {
-    Provider prov_inst[MAX_PROVIDERS_INSTANCES];
-    PgnEntry pgn_inst[MAX_PGNS_INSTANCES];
+    Providers providers;
+    Pgns pgns;
     GlobMetrics metr;
-    KeyManager pgn_mgmt;
-    KeyManager prov_mgmt;
 } Analyzer;
 
 int analyzer_populate(Analyzer *an, CanReader *cr);

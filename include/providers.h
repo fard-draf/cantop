@@ -5,8 +5,7 @@
 #include "utils.h"
 
 int provider_finder(Analyzer *an, CanReader *cr);
-void provider_init(Analyzer *an, Provider *provider, CanReader *cr);
-void provider_update(Analyzer *an, Provider *provider, CanReader *cr);
-void providers_actives(Analyzer *an, Provider *provider);
+void provider_init(Analyzer *an, ProviderEntry *provider, CanReader *cr);
+void provider_update(Analyzer *an, ProviderEntry *provider, CanReader *cr);
 
 #endif // PROVIDERS_H_
