@@ -7,5 +7,6 @@
 int provider_finder(Analyzer *an, CanReader *cr);
 void provider_init(Analyzer *an, ProviderEntry *provider, CanReader *cr);
 void provider_update(Analyzer *an, ProviderEntry *provider, CanReader *cr);
+void provider_update_rate(Analyzer *an, size_t provider_idx);
 
 #endif // PROVIDERS_H_

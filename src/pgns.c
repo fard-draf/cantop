@@ -5,8 +5,15 @@ int pgn_finder(Analyzer *an, CanReader *cr, size_t provider_idx) {
 
     // match pgn between inst[i].frame.pgn and cr->pgn
     for (uint8_t i = an->pgns.reg.instances_actives_count; i-- > 0;) {
-        if (an->pgns.entries[i].frame.pgn == cr->pgn) {
+        if (an->pgns.entries[i].frame.pgn == cr->pgn &&
+            an->pgns.entries[i].provider == cr->sa) {
 
+            for (uint8_t j = an->providers.reg.instances_actives_count;
+                 j-- > 0;) {
+                if (an->providers.entries[j].sa == cr->sa) {
+                    an->providers.entries[j].metr.datas.tram_count_total++;
+                }
+            }
             syslog(LOG_DEBUG,
                    "[DEBUG] provider %d | instance %zu | pgn %d -> match "
                    "instance on pgn_instance %d",

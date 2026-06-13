@@ -30,3 +30,19 @@ void provider_init(Analyzer *an, ProviderEntry *provider, CanReader *cr) {
 void provider_update(Analyzer *an, ProviderEntry *provider, CanReader *cr) {
     provider->metr.datas.last_seen = elapsed_ms(&an->metr.start);
 }
+
+void provider_update_rate(Analyzer *an, size_t provider_idx) {
+    ProviderEntry *provider_entry = &an->providers.entries[provider_idx];
+    int64_t now = elapsed_ms(&an->metr.start);
+    int64_t dt = now - provider_entry->metr.datas.snapshot_time;
+    uint32_t dc = provider_entry->metr.datas.tram_count_total -
+                  provider_entry->metr.datas.tram_count_snapshot;
+
+    if (dt > 0) {
+        provider_entry->metr.datas.tram_rate = (dc * 1000) / dt;
+    }
+
+    provider_entry->metr.datas.tram_count_snapshot =
+        provider_entry->metr.datas.tram_count_total;
+    provider_entry->metr.datas.snapshot_time = now;
+}
