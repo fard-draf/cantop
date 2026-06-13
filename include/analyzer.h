@@ -4,7 +4,13 @@
 #include "utils.h"
 
 #define MAX_PROVIDERS_INSTANCES 255
-#define MAX_PGNS_INSTANCES 255
+#define MAX_PGNS_INSTANCES      255
+#define PGN_DATA_HISTORY        40
+
+typedef struct {
+    uint8_t data[8];
+    uint8_t data_len;
+} DataSnapshot;
 
 typedef struct {
     uint8_t instances_actives_count;
@@ -34,9 +40,12 @@ typedef struct {
 } PgnMetrics;
 
 typedef struct {
-    Frame frame;
-    PgnMetrics metr;
-    uint8_t provider;
+    Frame        frame;
+    PgnMetrics   metr;
+    uint8_t      provider;
+    DataSnapshot history[PGN_DATA_HISTORY];
+    uint8_t      history_head;
+    uint8_t      history_count;
 } PgnEntry;
 
 typedef struct {

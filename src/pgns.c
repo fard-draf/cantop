@@ -1,5 +1,14 @@
 #include "../include/pgns.h"
 
+static void pgn_history_push(PgnEntry *e) {
+    DataSnapshot *s = &e->history[e->history_head];
+    s->data_len = e->frame.data_len;
+    memcpy(s->data, e->frame.data, e->frame.data_len);
+    e->history_head = (e->history_head + 1) % PGN_DATA_HISTORY;
+    if (e->history_count < PGN_DATA_HISTORY)
+        e->history_count++;
+}
+
 int pgn_finder(Analyzer *an, CanReader *cr, size_t provider_idx) {
     ProviderEntry provider = an->providers.entries[provider_idx];
 
@@ -45,6 +54,8 @@ int pgn_finder(Analyzer *an, CanReader *cr, size_t provider_idx) {
 }
 
 void pgn_init(Analyzer *an, PgnEntry *pgn_entry, CanReader *cr) {
+    pgn_entry->history_head  = 0;
+    pgn_entry->history_count = 0;
     pgn_entry->frame.pgn = cr->pgn;
     pgn_entry->frame.data_len = cr->dlc;
     pgn_entry->frame.dest_addr = cr->dest_addr;
@@ -55,6 +66,7 @@ void pgn_init(Analyzer *an, PgnEntry *pgn_entry, CanReader *cr) {
     for (uint8_t i = 0; i < pgn_entry->frame.data_len; i++) {
         pgn_entry->frame.data[i] = cr->data[i];
     }
+    pgn_history_push(pgn_entry);
 }
 
 void pgn_update(Analyzer *an, PgnEntry *pgn_entry, CanReader *cr) {
@@ -64,6 +76,7 @@ void pgn_update(Analyzer *an, PgnEntry *pgn_entry, CanReader *cr) {
     for (uint8_t i = 0; i < pgn_entry->frame.data_len; i++) {
         pgn_entry->frame.data[i] = cr->data[i];
     }
+    pgn_history_push(pgn_entry);
 }
 
 void pgn_update_rate(Analyzer *an, size_t pgn_idx) {
